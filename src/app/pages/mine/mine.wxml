@@ -1,0 +1,130 @@
+<view class="container">
+  <!-- 用户信息 -->
+  <view class="card">
+    <view class="card-title">👤 用户信息</view>
+
+    <view class="user-row">
+      <image wx:if="{{isLoggedIn && avatarUrl}}" src="{{avatarUrl}}" class="avatar" />
+      <view wx:else class="avatar-placeholder">👤</view>
+
+      <view class="user-info">
+        <text class="nickname">{{nickName}}</text>
+        <text class="user-sub" wx:if="{{isLoggedIn}}">已登录 · 微信账号</text>
+        <text class="user-sub" wx:else>未登录</text>
+      </view>
+    </view>
+
+    <view class="user-actions">
+      <button
+        wx:if="{{!isLoggedIn}}"
+        class="login-btn"
+        open-type="getUserInfo"
+        bindgetuserinfo="onGetUserInfo"
+      >
+        微信一键登录
+      </button>
+      <button wx:else class="logout-btn" size="mini" bindtap="onLogout">
+        退出登录
+      </button>
+    </view>
+  </view>
+
+  <!-- 个人统计 -->
+  <view class="card">
+    <view class="card-title">📊 个人统计</view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-num">{{totalBorrows}}</text>
+        <text class="stat-label">借阅次数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{totalReturns}}</text>
+        <text class="stat-label">归还次数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num" style="font-size: 26rpx;">{{favoriteAuthor}}</text>
+        <text class="stat-label">最爱作者</text>
+      </view>
+    </view>
+
+    <!-- 今日统计 (云端) -->
+    <view class="today-row">
+      <text class="today-label">📅 今日</text>
+      <text class="today-val borrow">借出 {{todayBorrows}}</text>
+      <text class="today-val return">归还 {{todayReturns}}</text>
+    </view>
+  </view>
+
+  <!-- 系统状态 -->
+  <view class="card">
+    <view class="card-title">📡 系统状态</view>
+
+    <view class="sys-row">
+      <text class="sys-label">MQTT 连接</text>
+      <text class="sys-value" style="color: {{mqttStatusColor}};">{{mqttStatus}}</text>
+    </view>
+    <view class="sys-row">
+      <text class="sys-label">Broker 地址</text>
+      <text class="sys-value mono" bindtap="onCopyBroker">{{brokerInfo}} 📋</text>
+    </view>
+    <view class="sys-row">
+      <text class="sys-label">☁️ 云端 API</text>
+      <text class="sys-value" style="color: {{cloudStatusColor}};">{{cloudStatus}}</text>
+    </view>
+    <view class="sys-row">
+      <text class="sys-label">📊 Web 仪表盘</text>
+      <text class="sys-value link" bindtap="onOpenDashboard">打开浏览器 🔗</text>
+    </view>
+    <view class="sys-row">
+      <text class="sys-label">⚙️ EMQX 管理</text>
+      <text class="sys-value link" bindtap="onOpenEmqx">Dashboard 🔗</text>
+    </view>
+    <view class="sys-row">
+      <text class="sys-label">小程序版本</text>
+      <text class="sys-value">{{appVersion}}</text>
+    </view>
+    <view class="sys-row">
+      <text class="sys-label">本地缓存</text>
+      <text class="sys-value">{{cacheSize}}</text>
+    </view>
+  </view>
+
+  <!-- 操作面板 -->
+  <view class="card">
+    <view class="card-title">🔧 工具</view>
+
+    <view class="tool-list">
+      <view class="tool-item" bindtap="onScanCode">
+        <text class="tool-icon">📷</text>
+        <view class="tool-info">
+          <text class="tool-name">扫一扫</text>
+          <text class="tool-desc">扫描图书条码或 RFID 标签</text>
+        </view>
+        <text class="tool-arrow">›</text>
+      </view>
+      <view class="tool-item" bindtap="onOpenDashboard">
+        <text class="tool-icon">🖥️</text>
+        <view class="tool-info">
+          <text class="tool-name">Web 数据看板</text>
+          <text class="tool-desc">打开浏览器查看完整仪表盘</text>
+        </view>
+        <text class="tool-arrow">🔗</text>
+      </view>
+    </view>
+
+    <button type="warn" size="mini" bindtap="onClearCache" class="clear-btn">
+      🗑️ 清除本地缓存
+    </button>
+  </view>
+
+  <!-- 关于 -->
+  <view class="card about-card">
+    <view class="about-title">📖 BookGuard · 书卫士</view>
+    <view class="about-desc">
+      智慧图书资产管理与推荐系统<br/>
+      课赛结合项目 · 2026<br/>
+      ELF3506 × EMQX × PostgreSQL × 微信小程序<br/>
+      实时 MQTT + 云端分析 双通道架构
+    </view>
+  </view>
+</view>

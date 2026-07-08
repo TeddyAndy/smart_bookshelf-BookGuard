@@ -1,0 +1,295 @@
+/* 统计网格 */
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-num {
+  font-size: 52rpx;
+  font-weight: bold;
+}
+
+.stat-num.red { color: #f5222d; }
+.stat-num.green { color: #52c41a; }
+.stat-num.yellow { color: #faad14; }
+.stat-num.blue { color: #2d8cf0; }
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
+
+/* 盘点按钮 */
+.scan-btn {
+  margin-top: 10rpx !important;
+  background: linear-gradient(135deg, #2d8cf0, #69c0ff) !important;
+  border-radius: 12rpx !important;
+  font-size: 30rpx !important;
+}
+
+.scan-hint {
+  text-align: center;
+  font-size: 22rpx;
+  color: #bbb;
+  margin-top: 10rpx;
+}
+
+/* 推荐横滑 */
+.rec-scroll {
+  white-space: nowrap;
+}
+
+.rec-list {
+  display: flex;
+  gap: 16rpx;
+  padding: 8rpx 0;
+}
+
+.rec-card {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 240rpx;
+  background: #fafafa;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  border: 2rpx solid #f0f0f0;
+}
+
+.rec-reason {
+  font-size: 22rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.rec-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rec-author {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
+
+.rec-pos {
+  font-size: 22rpx;
+  color: #2d8cf0;
+  margin-top: 6rpx;
+  background: #e6f7ff;
+  padding: 2rpx 10rpx;
+  border-radius: 8rpx;
+  display: inline-block;
+}
+
+.rec-rssi {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-top: 6rpx;
+}
+
+/* 记录列表 */
+.record-row {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 0;
+  border-bottom: 2rpx solid #f5f5f5;
+}
+
+.record-row:last-child {
+  border-bottom: none;
+}
+
+.record-badge {
+  color: #fff;
+  font-size: 22rpx;
+  padding: 6rpx 14rpx;
+  border-radius: 20rpx;
+  min-width: 70rpx;
+  text-align: center;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.record-main {
+  flex: 1;
+  overflow: hidden;
+}
+
+.record-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.record-author {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.record-pos {
+  font-size: 22rpx;
+  color: #888;
+}
+
+.record-time {
+  font-size: 22rpx;
+  color: #bbb;
+  flex-shrink: 0;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.empty-hint {
+  font-size: 24rpx;
+  color: #ccc;
+}
+
+/* ── 今日统计 ──────────────────────────────────────────── */
+
+.today-stats {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 14rpx 0;
+  margin-bottom: 16rpx;
+  border-top: 2rpx solid #f5f5f5;
+  border-bottom: 2rpx solid #f5f5f5;
+}
+
+.today-label {
+  font-size: 24rpx;
+  color: #888;
+}
+
+.today-num {
+  font-size: 26rpx;
+  font-weight: bold;
+}
+
+.today-num.borrow { color: #f5222d; }
+.today-num.return { color: #52c41a; }
+
+/* ── 云端标记 ──────────────────────────────────────────── */
+
+.cloud-badge {
+  font-size: 22rpx;
+  color: #2d8cf0;
+  background: #e6f7ff;
+  padding: 2rpx 10rpx;
+  border-radius: 10rpx;
+  margin-left: 10rpx;
+  vertical-align: middle;
+}
+
+/* ── 推荐增强 ──────────────────────────────────────────── */
+
+.rec-rank {
+  position: absolute;
+  top: 8rpx;
+  right: 12rpx;
+  font-size: 22rpx;
+  color: #ccc;
+  font-weight: bold;
+}
+
+.rec-score {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-top: 4rpx;
+}
+
+/* ── 热门排行 ──────────────────────────────────────────── */
+
+.popular-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #f5f5f5;
+  gap: 16rpx;
+}
+
+.popular-row:last-child {
+  border-bottom: none;
+}
+
+.pop-rank {
+  font-size: 28rpx;
+  font-weight: bold;
+  min-width: 50rpx;
+  text-align: center;
+}
+
+.pop-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.pop-title {
+  font-size: 28rpx;
+  color: #333;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pop-count {
+  font-size: 22rpx;
+  color: #aaa;
+}
+
+.pop-bar-wrap {
+  width: 120rpx;
+  height: 10rpx;
+  background: #f0f0f0;
+  border-radius: 5rpx;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.pop-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, #2d8cf0, #69c0ff);
+  border-radius: 5rpx;
+}
+
+/* ── 记录行微调 ────────────────────────────────────────── */
+
+.record-layer {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.rec-card {
+  position: relative;
+}

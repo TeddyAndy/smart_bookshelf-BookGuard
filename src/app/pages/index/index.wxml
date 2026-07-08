@@ -1,0 +1,190 @@
+<view class="container">
+  <!-- MQTT 连接状态 -->
+  <view class="card">
+    <view class="card-title">📡 连接状态</view>
+    <view style="display: flex; justify-content: space-between; align-items: center;">
+      <view>
+        <text style="font-size: 40rpx; font-weight: bold; color: {{statusColor}};">
+          {{statusText}}
+        </text>
+        <text style="font-size: 24rpx; color: #aaa; margin-left: 10rpx;" wx:if="{{deviceState !== '--'}}">
+          [{{deviceState}}]
+        </text>
+      </view>
+      <view style="color: #888; font-size: 26rpx;">
+        书架: {{totalBooks}}/{{totalSlots}} 本
+      </view>
+    </view>
+  </view>
+
+  <!-- 环境参数卡片 -->
+  <view class="card">
+    <view class="card-title">🌿 实时环境</view>
+    <view class="env-grid">
+      <view class="env-item">
+        <text class="env-icon">🌡️</text>
+        <text class="env-value">{{temperature}}</text>
+        <text class="env-label">温度</text>
+      </view>
+      <view class="env-item">
+        <text class="env-icon">💧</text>
+        <text class="env-value">{{humidity}}</text>
+        <text class="env-label">湿度</text>
+      </view>
+      <view class="env-item">
+        <text class="env-icon">☀️</text>
+        <text class="env-value">{{lux}}</text>
+        <text class="env-label">光照</text>
+      </view>
+    </view>
+
+    <!-- 雷达数据 -->
+    <view wx:if="{{radarState}}" class="radar-row">
+      <text class="radar-badge">📶 雷达: {{radarState}}</text>
+      <text wx:if="{{radarMove}}" style="margin-left: 16rpx; font-size: 26rpx; color: #666;">
+        运动 {{radarMove}}cm
+      </text>
+      <text wx:if="{{radarStill}}" style="margin-left: 16rpx; font-size: 26rpx; color: #666;">
+        静止 {{radarStill}}cm
+      </text>
+    </view>
+
+    <!-- 数据来源标记 -->
+    <view class="data-source">
+      <text wx:if="{{cloudOnline}}" class="source-tag cloud">☁️ 云端</text>
+      <text class="source-tag mqtt">📡 MQTT</text>
+    </view>
+  </view>
+
+  <!-- 24h 环境趋势 (云端) -->
+  <view class="card" wx:if="{{hasTrend}}">
+    <view class="card-title">📈 24h 环境趋势</view>
+    <view class="trend-cards">
+      <view class="trend-card temp">
+        <view class="trend-card-head">
+          <view>
+            <text class="trend-card-title">温度</text>
+            <text class="trend-card-range">{{trendTempMin}} ~ {{trendTempMax}} °C</text>
+          </view>
+          <text class="trend-card-value">{{temperature}}</text>
+        </view>
+        <canvas class="trend-canvas" canvas-id="tempChart" style="width: {{chartWidth}}px; height: {{chartHeight}}px;" width="{{chartWidth}}" height="{{chartHeight}}"></canvas>
+      </view>
+
+      <view class="trend-card hum">
+        <view class="trend-card-head">
+          <view>
+            <text class="trend-card-title">湿度</text>
+            <text class="trend-card-range">{{trendHumMin}} ~ {{trendHumMax}} %</text>
+          </view>
+          <text class="trend-card-value">{{humidity}}</text>
+        </view>
+        <canvas class="trend-canvas" canvas-id="humChart" style="width: {{chartWidth}}px; height: {{chartHeight}}px;" width="{{chartWidth}}" height="{{chartHeight}}"></canvas>
+      </view>
+
+      <view class="trend-card lux">
+        <view class="trend-card-head">
+          <view>
+            <text class="trend-card-title">光照</text>
+            <text class="trend-card-range">{{trendLuxMin}} ~ {{trendLuxMax}} lx</text>
+          </view>
+          <text class="trend-card-value">{{lux}}</text>
+        </view>
+        <canvas class="trend-canvas" canvas-id="luxChart" style="width: {{chartWidth}}px; height: {{chartHeight}}px;" width="{{chartWidth}}" height="{{chartHeight}}"></canvas>
+      </view>
+    </view>
+  </view>
+
+  <!-- 环境摘要 + 建议 (云端) -->
+  <view class="card" wx:if="{{summary}}">
+    <view class="card-title">📊 7 天环境摘要</view>
+    <view class="summary-grid">
+      <view class="summary-item">
+        <text class="summary-val">{{summary.avg_temp_c}}°C</text>
+        <text class="summary-sub">{{summary.min_temp_c}} ~ {{summary.max_temp_c}}°C</text>
+        <text class="summary-label">温度</text>
+      </view>
+      <view class="summary-item">
+        <text class="summary-val">{{summary.avg_hum_pct}}%</text>
+        <text class="summary-sub">{{summary.min_hum_pct}} ~ {{summary.max_hum_pct}}%</text>
+        <text class="summary-label">湿度</text>
+      </view>
+      <view class="summary-item">
+        <text class="summary-val">{{summary.avg_lux}} lx</text>
+        <text class="summary-sub">峰值 {{summary.max_lux}} lx</text>
+        <text class="summary-label">光照</text>
+      </view>
+    </view>
+    <!-- 建议 -->
+    <view wx:if="{{suggestions.length > 0}}" class="suggestions">
+      <view wx:for="{{suggestions}}" wx:key="index" class="suggestion-item">{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 书架可视化 — 精准距离竖排书脊 -->
+  <view class="card" wx:if="{{hasShelfData}}">
+    <view class="card-title">📚 书架视图 (38cm × {{shelfLayers.length}}层)</view>
+    <view wx:for="{{shelfLayers}}" wx:key="index" class="shelf-layer-v">
+      <view class="shelf-layer-header">
+        <text class="shelf-layer-name">{{item.name}}</text>
+        <text class="shelf-layer-count">{{item.bookCount}}本</text>
+      </view>
+      <!-- 书架轨道 — 精准定位 -->
+      <view class="shelf-track-v">
+        <view
+          wx:for="{{item.spines}}"
+          wx:for-item="spine"
+          wx:key="epc"
+          class="spine-book-v"
+          style="left: {{spine.leftPct}}%; width: {{spine.widthPct}}%; background: linear-gradient(180deg, {{spine.color}}, {{spine.color}}cc);"
+        >
+          <text class="spine-title-v">{{spine.title}}</text>
+        </view>
+      </view>
+      <!-- 距离刻度 -->
+      <view class="shelf-ticks-v">
+        <text>0</text><text>10</text><text>20</text><text>30</text><text>38cm</text>
+      </view>
+    </view>
+    <view class="shelf-legend-v">
+      <view class="legend-dot-v" style="background:#2d8cf0;"></view><text>在架书籍</text>
+      <view class="legend-dot-v" style="background:#e8e8e8;"></view><text>空位</text>
+    </view>
+  </view>
+
+  <!-- 告警卡片 -->
+  <view class="card" wx:if="{{alarmList.length > 0}}">
+    <view class="card-title">⚠️ 告警提醒</view>
+    <swiper vertical autoplay interval="2500" circular style="height: 80rpx;">
+      <swiper-item wx:for="{{alarmList}}" wx:key="index">
+        <text class="alarm-text">{{item}}</text>
+      </swiper-item>
+    </swiper>
+  </view>
+  <view class="card" wx:else>
+    <view class="card-title">✅ 系统正常</view>
+    <view class="normal-text">所有设备运行正常，无告警信息</view>
+  </view>
+
+  <!-- 最近事件 -->
+  <view class="card">
+    <view class="card-title">📋 最近动态</view>
+    <view wx:if="{{recentEvents.length === 0}}" class="normal-text">
+      暂无操作记录，等待板子上报数据...
+    </view>
+    <view wx:for="{{recentEvents}}" wx:key="id" class="event-row">
+      <text class="event-type">{{item.typeText}}</text>
+      <text class="event-title">{{item.title || item.epc || '--'}}</text>
+      <text class="event-time">{{item.time}}</text>
+    </view>
+  </view>
+
+  <!-- 数据来源说明 -->
+  <view class="card" style="background: #f0f7ff; border-left: 6rpx solid #2d8cf0;">
+    <view style="font-size: 26rpx; color: #555;">
+      📡 实时：ELF3506 → MQTT → 小程序 WebSocket<br/>
+      ☁️ 历史：ELF3506 → MQTT → PostgreSQL → HTTP API → 小程序<br/>
+      🟢 双通道混合架构 · 实时 + 分析
+    </view>
+  </view>
+</view>

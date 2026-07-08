@@ -1,0 +1,7 @@
+# 包含密码的配置文件不入库
+config.py
+
+# Python
+__pycache__/
+*.pyc
+.venv/

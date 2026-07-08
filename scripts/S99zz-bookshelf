@@ -1,0 +1,20 @@
+#!/bin/sh
+
+case "$1" in
+    start)
+        /root/bookshelf_supervisor.sh start
+        ;;
+    stop)
+        /root/bookshelf_supervisor.sh stop
+        ;;
+    restart)
+        /root/bookshelf_supervisor.sh restart
+        ;;
+    status)
+        /root/bookshelf_supervisor.sh status
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac

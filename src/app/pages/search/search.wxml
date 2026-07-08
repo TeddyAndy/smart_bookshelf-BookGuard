@@ -1,0 +1,162 @@
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="card">
+    <view class="card-title">🔍 图书查找</view>
+    <view class="search-bar">
+      <input
+        placeholder="输入书名、作者或EPC编号"
+        value="{{query}}"
+        bindinput="onInput"
+        confirm-type="search"
+        bindconfirm="onSearch"
+        class="search-input"
+      />
+      <button wx:if="{{query}}" type="default" size="mini" bindtap="onClear" class="clear-btn">✕</button>
+    </view>
+    <button type="primary" bindtap="onSearch" disabled="{{searching}}" class="search-btn">
+      {{searching ? '查找中...' : '查找'}}
+    </button>
+    <view wx:if="{{resultHint}}" class="search-hint">{{resultHint}}</view>
+  </view>
+
+  <!-- 查找结果详情 -->
+  <view class="card" wx:if="{{foundBook}}">
+    <view class="card-title">
+      📖 {{foundBook.title || '未命名'}}
+      <text wx:if="{{results.length > 1}}" class="back-to-list" bindtap="onBackToList">← 返回列表</text>
+    </view>
+
+    <view class="detail-grid">
+      <view class="detail-row">
+        <text class="detail-label">作者</text>
+        <text class="detail-value">{{foundBook.author || '未知'}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">位置</text>
+        <text class="detail-value highlight">{{foundBook.layerName}} · {{foundBook.start_cm}}-{{foundBook.end_cm}}cm</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">EPC</text>
+        <text class="detail-value mono">{{foundBook.epc || '--'}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">信号</text>
+        <text class="detail-value">RSSI {{foundBook.rssi != null ? foundBook.rssi : '--'}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">状态</text>
+        <text class="detail-value {{foundBook.present ? 'present' : 'absent'}}">
+          {{foundBook.present ? '🟢 在架' : '🔴 已取出'}}
+        </text>
+      </view>
+    </view>
+
+    <!-- 位置指示条 -->
+    <view class="position-bar-wrap">
+      <text class="position-label">{{foundBook.layerName}}</text>
+      <view class="position-bar">
+        <view class="pos-segment pos-occupied"
+          style="left: {{foundBook.start_cm / 38 * 100}}%; width: {{(foundBook.end_cm - foundBook.start_cm) / 38 * 100}}%;"
+        />
+        <view class="pos-marker" style="left: {{foundBook.start_cm / 38 * 100}}%;">▼</view>
+      </view>
+      <view class="position-ticks">
+        <text>0cm</text><text>38cm</text>
+      </view>
+    </view>
+
+    <view class="led-hint">
+      {{commandSent ? '💡 已发送查找命令，书架 LED 灯带将指引该书位置' : '💡 先确认目标图书，再发送灯光查找，避免模糊输入误触发多本查找'}}
+    </view>
+    <button type="primary" bindtap="onLocateBook" disabled="{{locating}}" class="locate-btn">
+      {{locating ? '发送中...' : '发送灯光查找'}}
+    </button>
+    <view wx:if="{{commandSent}}" class="command-status">已向设备发送查找：{{commandTarget}}</view>
+
+    <!-- 借阅历史 (云端) -->
+    <view wx:if="{{hasHistory}}" class="history-section">
+      <view class="history-head" bindtap="onToggleHistory">
+        <text class="section-title">📜 借阅历史 <text class="cloud-badge">☁️</text></text>
+        <text class="history-toggle">{{historyExpanded ? '收起' : '展开'}}</text>
+      </view>
+      <view wx:if="{{historyExpanded}}">
+        <view wx:for="{{bookHistory}}" wx:key="index" class="history-row">
+          <text class="h-type">{{item.typeText}}</text>
+          <text class="h-layer" wx:if="{{item.layer}}">{{item.layer}}</text>
+          <text class="h-time">{{item.time}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 关联推荐 (云端) -->
+    <view wx:if="{{hasRelated}}" class="related-section">
+      <text class="section-title">🎯 借过此书的人也借了 <text class="cloud-badge">☁️</text></text>
+      <scroll-view scroll-x class="related-scroll">
+        <view class="related-list">
+          <view wx:for="{{relatedBooks}}" wx:key="epc" class="related-card">
+            <text class="rel-title">{{item.title || (item.epc ? item.epc.slice(-8) : "") || '?'}}</text>
+            <text class="rel-pct">共借 {{item.co_count}} 次 · {{item.coPctLabel}}关联</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 搜索结果列表 -->
+  <view class="card" wx:if="{{searched && results.length > 0 && (!foundBook || results.length > 1)}}">
+    <view class="card-title">
+      搜索结果: {{results.length}} 本
+      <text wx:if="{{cloudResults}}" class="cloud-badge">☁️ 云端</text>
+    </view>
+
+    <view wx:if="{{results.length > 0}}">
+      <view
+        wx:for="{{results}}"
+        wx:key="epc"
+        data-index="{{index}}"
+        bindtap="onSelectResult"
+        class="result-row {{selectedIndex === index ? 'selected' : ''}}"
+      >
+        <view class="result-main">
+          <text class="result-title">{{item.title || '未命名'}}</text>
+          <text class="result-author">{{item.author || ''}}</text>
+        </view>
+        <view class="result-pos">
+          <text class="result-layer">{{item.layerName}}</text>
+          <text class="result-cm">{{item.start_cm}}-{{item.end_cm}}cm</text>
+        </view>
+        <text class="result-arrow">{{selectedIndex === index ? '已选' : '选择'}}</text>
+      </view>
+    </view>
+
+    <view wx:else class="empty-result">
+      <text class="empty-icon">📭</text>
+      <text>未找到匹配的图书</text>
+      <text class="empty-hint">已向设备发送查找命令，请观察书架 LED 指引</text>
+    </view>
+  </view>
+
+  <!-- 未搜索时的浏览模式 -->
+  <view class="card" wx:if="{{!searched}}">
+    <view class="card-title">📚 全部藏书 ({{totalBooks}}本)</view>
+    <view wx:if="{{_allBooks && _allBooks.length > 0}}">
+      <view
+        wx:for="{{_allBooks}}"
+        wx:key="epc"
+        data-index="{{index}}"
+        bindtap="onSelectBrowse"
+        class="result-row"
+      >
+        <view class="result-main">
+          <text class="result-title">{{item.title || '未命名'}}</text>
+          <text class="result-author">{{item.author || ''}}</text>
+        </view>
+        <view class="result-pos">
+          <text class="result-layer">{{item.layerName}}</text>
+        </view>
+        <text class="result-arrow">›</text>
+      </view>
+    </view>
+    <view wx:else class="normal-text">等待书架数据同步...</view>
+  </view>
+</view>

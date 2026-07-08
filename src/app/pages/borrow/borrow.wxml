@@ -1,0 +1,100 @@
+<view class="container">
+  <!-- 统计概览 -->
+  <view class="card">
+    <view class="card-title">📊 借阅统计</view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-num red">{{statBorrowed}}</text>
+        <text class="stat-label">累计借出</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num green">{{statReturned}}</text>
+        <text class="stat-label">累计归还</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num yellow">{{statMisplaced}}</text>
+        <text class="stat-label">错放</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num blue">{{shelfBooks}}</text>
+        <text class="stat-label">在架</text>
+      </view>
+    </view>
+
+    <!-- 今日统计 (云端) -->
+    <view wx:if="{{cloudOnline}}" class="today-stats">
+      <text class="today-label">📅 今日: </text>
+      <text class="today-num borrow">借出 {{todayBorrows}}</text>
+      <text class="today-num return">归还 {{todayReturns}}</text>
+    </view>
+
+    <!-- 盘点按钮 -->
+    <button
+      type="primary"
+      bindtap="onScanShelf"
+      disabled="{{scanning}}"
+      class="scan-btn"
+    >
+      {{scanning ? '🔄 盘点中...' : '📡 立即盘点书架'}}
+    </button>
+    <view class="scan-hint">向板子发送盘点命令，触发 RFID 全量扫描</view>
+  </view>
+
+  <!-- 综合推荐 (云端推荐引擎) -->
+  <view class="card" wx:if="{{hasRecommendations}}">
+    <view class="card-title">✨ 为你推荐 <text class="cloud-badge">☁️ 云端</text></view>
+    <scroll-view scroll-x class="rec-scroll">
+      <view class="rec-list">
+        <view wx:for="{{recommendations}}" wx:key="epc" class="rec-card">
+          <view class="rec-rank">#{{item.rank}}</view>
+          <view class="rec-reason" style="color: {{item.reasonColor}};">
+            {{item.reasonLabel}}
+          </view>
+          <view class="rec-title">{{item.title || (item.epc ? item.epc.slice(-8) : "") || '?'}}</view>
+          <view class="rec-score">推荐分 {{item.score}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 热门书籍 (云端) -->
+  <view class="card" wx:if="{{hasPopular}}">
+    <view class="card-title">🏆 热门排行 <text class="cloud-badge">☁️ 云端</text></view>
+    <view wx:for="{{popularBooks}}" wx:key="epc" class="popular-row">
+      <view class="pop-rank" style="color: {{item.rank <= 3 ? '#f5222d' : '#999'}};">
+        {{item.rank <= 3 ? '🏅' : ''}}{{item.rank}}
+      </view>
+      <view class="pop-main">
+        <text class="pop-title">{{item.title || (item.epc ? item.epc.slice(-8) : "") || '?'}}</text>
+        <text class="pop-count">借阅 {{item.borrow_count}} 次</text>
+      </view>
+      <view class="pop-bar-wrap">
+        <view class="pop-bar-fill" style="width: {{item.popularityPct}};"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 借阅记录 (云端) -->
+  <view class="card">
+    <view class="card-title">📋 借阅记录 <text wx:if="{{cloudOnline}}" class="cloud-badge">☁️ 云端</text></view>
+
+    <view wx:if="{{hasRecords}}">
+      <view wx:for="{{borrowRecords}}" wx:key="id" class="record-row">
+        <view class="record-badge" style="background: {{item.typeColor}};">
+          {{item.typeText}}
+        </view>
+        <view class="record-main">
+          <text class="record-title">{{item.title}}</text>
+          <text class="record-layer" wx:if="{{item.layer}}"> · {{item.layer}}</text>
+        </view>
+        <text class="record-time">{{item.time}}</text>
+      </view>
+    </view>
+
+    <view wx:else class="empty-state">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无借阅记录</text>
+      <text class="empty-hint">云端数据库尚无记录，等待板子上报...</text>
+    </view>
+  </view>
+</view>

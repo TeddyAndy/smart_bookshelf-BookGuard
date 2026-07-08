@@ -1,0 +1,199 @@
+/* 用户行 */
+.user-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  margin-right: 24rpx;
+}
+
+.avatar-placeholder {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  margin-right: 24rpx;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.nickname {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.user-sub {
+  font-size: 24rpx;
+  color: #aaa;
+  margin-top: 4rpx;
+}
+
+.user-actions {
+  margin-top: 10rpx;
+}
+
+.login-btn {
+  background: linear-gradient(135deg, #07c160, #10d070) !important;
+  color: #fff !important;
+  border-radius: 12rpx !important;
+  font-size: 30rpx !important;
+}
+
+.logout-btn {
+  color: #999 !important;
+}
+
+/* 统计 */
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-num {
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #2d8cf0;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 6rpx;
+}
+
+/* ── 今日统计 ──────────────────────────────────────────── */
+
+.today-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 20rpx;
+  padding-top: 16rpx;
+  border-top: 2rpx solid #f5f5f5;
+}
+
+.today-label {
+  font-size: 24rpx;
+  color: #888;
+}
+
+.today-val {
+  font-size: 26rpx;
+  font-weight: bold;
+}
+
+.today-val.borrow { color: #f5222d; }
+.today-val.return { color: #52c41a; }
+
+/* 系统状态行 */
+.sys-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14rpx 0;
+  border-bottom: 2rpx solid #f5f5f5;
+}
+
+.sys-row:last-child {
+  border-bottom: none;
+}
+
+.sys-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.sys-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.sys-value.mono {
+  font-family: 'Courier New', monospace;
+  font-size: 26rpx;
+}
+
+.sys-value.link {
+  color: #2d8cf0;
+}
+
+/* 工具列表 */
+.tool-list {
+  margin-bottom: 16rpx;
+}
+
+.tool-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #f5f5f5;
+}
+
+.tool-icon {
+  font-size: 44rpx;
+  margin-right: 20rpx;
+}
+
+.tool-info {
+  flex: 1;
+}
+
+.tool-name {
+  font-size: 30rpx;
+  color: #333;
+  display: block;
+}
+
+.tool-desc {
+  font-size: 24rpx;
+  color: #aaa;
+  margin-top: 4rpx;
+}
+
+.tool-arrow {
+  font-size: 36rpx;
+  color: #ccc;
+}
+
+.clear-btn {
+  margin-top: 10rpx !important;
+}
+
+/* 关于 */
+.about-card {
+  text-align: center;
+  background: #f8f9ff !important;
+}
+
+.about-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #2d8cf0;
+  margin-bottom: 12rpx;
+}
+
+.about-desc {
+  font-size: 24rpx;
+  color: #999;
+  line-height: 1.8;
+}
